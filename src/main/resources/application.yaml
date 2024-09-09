@@ -1,0 +1,20 @@
+service:
+  port: 8080
+  servlet:
+    context-path: /map
+
+spring:
+  application:
+    name: test-spring-boot
+  datasource:
+    url: "jdbc:mysql://localhost:3306/api_service"
+    username: root
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+jwt:
+  signerkey: "7PspiJMEcipq8jf9dd2ZLmOvlb5RsXULcEQsvTMv8ZVSOtLRrj8XS31KRraFw65B\r\n"

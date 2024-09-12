@@ -17,6 +17,6 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiRequest<T> {
     int code = 200;
-    String message;
+    String message = "SUCCESSFUL";
     T result;
 }

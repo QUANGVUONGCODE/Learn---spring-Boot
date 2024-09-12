@@ -1,6 +1,7 @@
 package com.api.dbo.response;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,10 @@ import lombok.experimental.FieldDefaults;
 public class UserResponse {
     String id;
     String userName;
-    String password;
     String firstName;
     String lastName;
     String email;
     String phone;
     LocalDate birthDate;
+    Set<String> roles;
 }

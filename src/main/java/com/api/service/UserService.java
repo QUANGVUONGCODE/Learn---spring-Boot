@@ -1,8 +1,8 @@
 package com.api.service;
 
+import java.util.HashSet;
 import java.util.List;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +10,7 @@ import com.api.dbo.request.UserCreationRequest;
 import com.api.dbo.request.UserUpdataRequest;
 import com.api.dbo.response.UserResponse;
 import com.api.entity.User;
+import com.api.enums.Role;
 import com.api.exception.AppException;
 import com.api.exception.ErrorCode;
 import com.api.mapper.UserMapper;
@@ -26,14 +27,18 @@ public class UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     public UserResponse insertUser(UserCreationRequest request) {
         if (userRepository.existsByUserName(request.getUserName())) {
             throw new AppException(ErrorCode.USER_EXISTS);
         }
         User user = userMapper.toUser(request);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -51,7 +56,6 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOUND_ID));
         userMapper.updateUser(user, request);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userMapper.toUserResponse(userRepository.save(user));
     }

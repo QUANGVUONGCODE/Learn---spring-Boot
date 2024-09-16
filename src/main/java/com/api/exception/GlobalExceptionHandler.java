@@ -1,6 +1,7 @@
 package com.api.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,7 +27,20 @@ public class GlobalExceptionHandler {
         if (apiRequest.getCode() == 1004) {
             return ResponseEntity.ok().body(apiRequest);
         }
-        return ResponseEntity.badRequest().body(apiRequest);
+        return ResponseEntity
+                .status(errorCode.getHttpStatusCode())
+                .body(apiRequest);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<ApiRequest> handlingAccessDeniedException(AccessDeniedException e) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+
+        return ResponseEntity.status(errorCode.getHttpStatusCode()).body(
+                ApiRequest.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

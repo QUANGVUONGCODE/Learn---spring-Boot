@@ -63,9 +63,16 @@ public class UserController {
 
     @GetMapping("/{id}")
     ApiRequest<UserResponse> getUser(@PathVariable("id") String id) {
-        ApiRequest<UserResponse> apiRequest = new ApiRequest<>();
-        apiRequest.setResult(userService.getUser(id));
-        return apiRequest;
+        return ApiRequest.<UserResponse>builder()
+                .result(userService.getUser(id))
+                .build();
+    }
+
+    @GetMapping("/myinfo")
+    ApiRequest<UserResponse> getMyinfo() {
+        return ApiRequest.<UserResponse>builder()
+                .result(userService.getMyinfo())
+                .build();
     }
 
     @DeleteMapping("/{id}")

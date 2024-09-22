@@ -3,6 +3,8 @@ package com.api.dbo.response;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.api.entity.Role;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +25,5 @@ public class UserResponse {
     String email;
     String phone;
     LocalDate birthDate;
-    Set<String> roles;
+    Set<Role> roles;
 }

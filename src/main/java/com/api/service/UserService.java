@@ -17,6 +17,7 @@ import com.api.enums.Role;
 import com.api.exception.AppException;
 import com.api.exception.ErrorCode;
 import com.api.mapper.UserMapper;
+import com.api.repository.RoleRepository;
 import com.api.repository.UserRepository;
 
 import lombok.AccessLevel;
@@ -33,6 +34,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     public UserResponse insertUser(UserCreationRequest request) {
         if (userRepository.existsByUserName(request.getUserName())) {
@@ -53,7 +55,7 @@ public class UserService {
                 userMapper::toUserResponse).toList();
     }
 
-    @PostAuthorize("returnObject.userName == authentication.name")
+    @PostAuthorize("returnObject.userName == authentication.name || hasRole('ADMIN')")
     public UserResponse getUser(String id) {
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOUND_ID)));
@@ -71,6 +73,8 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.FOUND_ID));
         userMapper.updateUser(user, request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

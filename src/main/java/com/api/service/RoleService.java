@@ -27,8 +27,11 @@ public class RoleService {
 
     public RoleReponse create(RoleRequest request) {
         var role = roleMapper.MapToRole(request);
+
         var permissions = permissionRepository.findAllById(request.getPermissions());
+
         role.setPermissions(new HashSet<>(permissions));
+
         role = roleRepository.save(role);
         return roleMapper.MapToRoleReponse(role);
     }

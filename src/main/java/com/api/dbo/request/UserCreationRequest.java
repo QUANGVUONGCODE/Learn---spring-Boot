@@ -2,6 +2,8 @@ package com.api.dbo.request;
 
 import java.time.LocalDate;
 
+import com.api.validor.DobConstraint;
+
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,5 +26,6 @@ public class UserCreationRequest {
     String lastName;
     String email;
     String phone;
+    @DobConstraint(min = 16, message = "DOB_INVALID")
     LocalDate birthDate;
 }

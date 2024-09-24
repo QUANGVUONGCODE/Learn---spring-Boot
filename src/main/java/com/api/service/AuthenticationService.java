@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 import com.api.dbo.request.AutheticationRequest;
 import com.api.dbo.request.IntrospectRequest;
 import com.api.dbo.request.LogoutRequest;
+import com.api.dbo.request.RefreshRequest;
 import com.api.dbo.response.AuthenticationReponse;
 import com.api.dbo.response.IntrospectReponse;
 import com.api.entity.InvalidatedToken;
@@ -119,6 +120,30 @@ public class AuthenticationService {
                 .expiryTime(expiryTime)
                 .build();
         invalidateTokenRepository.save(invalidatedToken);
+    }
+
+    public AuthenticationReponse refreshToken(RefreshRequest token)
+            throws JOSEException, ParseException {
+        var signToken = verifyToken(token.getToken());
+
+        var jit = signToken.getJWTClaimsSet().getJWTID();
+
+        var expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expiryTime(expiryTime)
+                .build();
+        invalidateTokenRepository.save(invalidatedToken);
+
+        var username = signToken.getJWTClaimsSet().getSubject();
+        var user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        var tokens = genarateToken(user);
+        return AuthenticationReponse.builder()
+                .token(tokens)
+                .authenticated(true)
+                .build();
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {

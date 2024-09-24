@@ -11,6 +11,7 @@ import com.api.dbo.request.ApiRequest;
 import com.api.dbo.request.AutheticationRequest;
 import com.api.dbo.request.IntrospectRequest;
 import com.api.dbo.request.LogoutRequest;
+import com.api.dbo.request.RefreshRequest;
 import com.api.dbo.response.AuthenticationReponse;
 import com.api.dbo.response.IntrospectReponse;
 import com.api.service.AuthenticationService;
@@ -49,6 +50,15 @@ public class AuthenticationController {
             throws JOSEException, ParseException {
         authenticationService.logout(request);
         return ApiRequest.<Void>builder().build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiRequest<AuthenticationReponse> authenticate(@RequestBody RefreshRequest request)
+            throws JOSEException, ParseException {
+        var result = authenticationService.refreshToken(request);
+        return ApiRequest.<AuthenticationReponse>builder()
+                .result(result)
+                .build();
     }
 
 }
